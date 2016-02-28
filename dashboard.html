@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<script src="{{ url_for('static', filename='jquery.js') }}"></script>
+<script>
+    
+function poll() {
+  var total = 0;
+  $.get("/data", function( data ) {
+    var list = data.split('\n')
+    if (list.length > total) {
+      total = list.length;
+      for (e in list) {
+        try {
+          var ev = list[e];
+          ev = remove(ev.split(" "),"");
+          var ts = ev[0].trim();
+          var wolv = ev[1].trim();
+          $('#main-table tr:last')
+            .after('<tr><td>' + ts + '</td><td>' + wolv + '</td></tr>');
+          }
+          catch(e) {
+            continue;
+          }
+        }
+      }
+  });
+}
+
+function remove(arr, item) {
+  for(var i = arr.length; i--;) {
+    if(arr[i] === item) {
+      arr.splice(i, 1);
+    }
+  }
+  return arr
+}
+
+$( document ).ready(function() {
+    poll();
+    // For every 5 mins
+    setTimeout(function(){
+      poll();
+    }, 1000 * 60 * 5);
+});
+
+
+</script>
+<a href="submit_form">Home</a>
+<h1>Dashboard</h1>
+<table style="width:100%" id="main-table">
+  <tr>
+    <td>Timestamp</td>
+    <td>Data</td> 
+  </tr>
+</table>
+</html>
